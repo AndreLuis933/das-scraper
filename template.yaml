@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Das-Bot
+
+Parameters:
+  CNPJ:
+    Type: String
+    Description: CNPJ do usuario
+    NoEcho: true
+
+Resources:
+  DasBotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: das-bot
+      PackageType: Image
+      Timeout: 60
+      MemorySize: 1024
+      Architectures:
+        - x86_64
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Environment:
+        Variables:
+          CNPJ: !Ref CNPJ
+      Events:
+        MonthlyCronSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 15 10 * ? *)  # Dia 1 de cada mês às 12:00 UTC (09:00 BRT)
+            Name: das-bot-monthly-rule
+            Enabled: true
+            Description: Executa das-bot no dia 10 de cada mês
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: latest

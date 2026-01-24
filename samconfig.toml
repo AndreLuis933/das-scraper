@@ -1,0 +1,7 @@
+version = 0.1
+
+[default.build.parameters]
+template_file = "c:\\Users\\Andre\\Desktop\\software\\Bot\\Das\\template.yaml"
+cached = true
+parallel = true
+use_container = true
