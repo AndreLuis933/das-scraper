@@ -1,7 +1,10 @@
+import datetime
 import io
+import os
 import random
 import re
 import sys
+import time
 from contextlib import suppress as contextlib_suppress
 from pathlib import Path
 
@@ -11,14 +14,23 @@ from pandascamoufox import CamoufoxDf
 from PyPDF2 import PdfReader
 
 if not (Path("/.dockerenv").exists() or Path("/run/.containerenv").exists()):
+    from dotenv import load_dotenv
     from PrettyColorPrinter import add_printer
 
+    load_dotenv()
     add_printer(1)
 
-def tempo_aleatorio(min_segundos, max_segundos):
+
+def tempo_aleatorio(min_segundos=0.3, max_segundos=0.7):
     return random.uniform(min_segundos, max_segundos)
 
+
 def handler(_, __):
+    cnpj = os.getenv("CNPJ", "")
+    if not cnpj:
+        print("sem cnpj, retornando")
+        return
+
     cfox = CamoufoxDf(humanize=False, headless=True, **{"exclude_addons": [DefaultAddons.UBO]})
 
     def gf(selector="*"):
@@ -28,24 +40,43 @@ def handler(_, __):
                 if "aa_text" in df.columns:
                     return df
 
-    cnpj = ""
+    agora = datetime.datetime.now(tz=datetime.UTC)
+    ano_str = agora.strftime("%Y")
+    ano_mes = agora.strftime("%Y%m")
+
     cfox.page.goto("https://www8.receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/Identificacao")
+    time.sleep(tempo_aleatorio())
 
     gf("#cnpj").iloc[0].bb_fill(cnpj)
+    time.sleep(tempo_aleatorio())
+
     gf("#continuar").iloc[0].bb_click()
+
     df = pd.DataFrame()
     while df.empty:
         with contextlib_suppress(Exception):
             df = gf('a[href="/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/emissao"]')
 
+    time.sleep(tempo_aleatorio())
     df.iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
 
     gf('button[data-id="anoCalendarioSelect"]').iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
+
     df = gf("li")
-    df.loc[df.aa_text.str.contains("2026", na=False)].iloc[0].bb_click()
+    df.loc[df.aa_text.str.contains(ano_str, na=False)].iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
+
     gf('button[type="submit"].btn-success').iloc[0].bb_click()
-    gf('input[value="202601"].paSelecionado').iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
+
+    gf(f'input[value="{ano_mes}"].paSelecionado').iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
+
     gf("#btnEmitirDas").iloc[0].bb_click()
+    time.sleep(tempo_aleatorio())
+
     page = cfox.page
 
     with page.expect_download(timeout=5000) as download_info:

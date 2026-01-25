@@ -14,7 +14,7 @@ Resources:
     Properties:
       FunctionName: das-bot
       PackageType: Image
-      Timeout: 60
+      Timeout: 300
       MemorySize: 1024
       Architectures:
         - x86_64
