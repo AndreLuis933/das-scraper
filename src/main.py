@@ -13,13 +13,12 @@ from camoufox.utils import DefaultAddons
 from pandascamoufox import CamoufoxDf
 from PyPDF2 import PdfReader
 
-if not (Path("/.dockerenv").exists() or Path("/run/.containerenv").exists()):
-    from dotenv import load_dotenv
-    from PrettyColorPrinter import add_printer
+# from dotenv import load_dotenv
+# load_dotenv()
+#if not (Path("/.dockerenv").exists() or Path("/run/.containerenv").exists()):
+    #from PrettyColorPrinter import add_printer
 
-    load_dotenv()
-    add_printer(1)
-
+    #add_printer(1)
 
 def tempo_aleatorio(min_segundos=0.3, max_segundos=0.7):
     return random.uniform(min_segundos, max_segundos)
