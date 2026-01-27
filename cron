@@ -1,0 +1,1 @@
+00 12 10 * * /das-scraper/run-das.sh >> /das-scraper/logs/scraper.log 2>&1

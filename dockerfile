@@ -1,48 +1,63 @@
-FROM python:3.12-slim AS builder
+FROM ghcr.io/astral-sh/uv:0.9.17-trixie-slim AS builder
 
-WORKDIR /app
+ENV UV_COMPILE_BYTECODE=1 \
+  UV_LINK_MODE=copy \
+  UV_PYTHON_PREFERENCE=only-managed \
+  UV_NO_DEV=1 \
+  UV_PYTHON_INSTALL_DIR=/python
 
-# Instalar dependências de compilação
 RUN apt-get update && apt-get install -y \
     g++ \
     gcc \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && update-ca-certificates
 
-RUN pip install uv
+RUN uv python install 3.12
+
+WORKDIR /app
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+  --mount=type=bind,source=uv.lock,target=uv.lock \
+  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+  uv sync --frozen --no-install-project ;
+
+
+RUN .venv/bin/python -m camoufox fetch
+
+RUN .venv/bin/python -c "from pandascamoufox import CamoufoxDf"
 
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 
-RUN uv sync --locked --no-dev --compile-bytecode
-
-# Baixar o navegador Camoufox no builder
-RUN .venv/bin/python -m camoufox fetch
-
 COPY src /app/src
 
-# Compilar pandascamoufox durante o build
-RUN .venv/bin/python src/main.py --no-run
+RUN --mount=type=cache,target=/root/.cache/uv \
+  uv sync --frozen
 
-# Estágio final - sem ferramentas de compilação
-FROM python:3.12-slim
+FROM debian:trixie-slim AS production
 
-WORKDIR /app
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONIOENCODING=utf-8
 
-# Instalar dependências de runtime do Camoufox
 RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libasound2 \
     libx11-xcb1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar dependências Python para o diretório padrão do Lambda
-COPY --from=builder /app/.venv /app/.venv
+RUN groupadd -r python && useradd -r -g python python
 
-# Copiar código fonte para o diretório do Lambda
-COPY --from=builder /app/src /app/src
+COPY --from=builder /python /python
+COPY --from=builder --chown=python:python /root/.cache/camoufox /home/python/.cache/camoufox
+COPY --from=builder --chown=python:python /app/.venv /app/.venv
+COPY --from=builder --chown=python:python /app/src /app/src
 
-# Copiar o cache do Camoufox (navegador baixado)
-COPY --from=builder /root/.cache/camoufox /root/.cache/camoufox
+ENV PATH="/app/.venv/bin:${PATH}"
 
-CMD [".venv/bin/python", "src/main.py"]
+USER python
+WORKDIR /app
+
+CMD ["python", "src/main.py"]
