@@ -30,6 +30,7 @@ def tempo_aleatorio(min_segundos=0.3, max_segundos=0.7):
     return random.uniform(min_segundos, max_segundos)
 
 
+
 logger.info("=== INICIO DA FUNÇÃO ===")
 
 cnpj = os.getenv("CNPJ", "")
