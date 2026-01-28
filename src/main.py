@@ -47,13 +47,17 @@ cfox = CamoufoxDf(humanize=False, headless=True, exclude_addons= [DefaultAddons.
 logger.info("✓ Camoufox inicializado")
 
 
-def gf(selector="*"):
+def gf(selector="*", timeout=30):
+    inicio = time.time()
     while True:
+        if time.time() - inicio > timeout:
+            msg = f"Timeout esperando por: {selector}"
+            raise TimeoutError(msg)
         with contextlib_suppress(Exception):
             df = cfox.get_df(selector)
             if "aa_text" in df.columns:
                 return df
-
+        time.sleep(0.1)
 
 agora = datetime.datetime.now(tz=datetime.UTC).astimezone()
 
@@ -112,7 +116,7 @@ try:
         pdf_bytes = f.read()
 
 except Exception as e:
-    logger.info(f"❌ ERRO NO DOWNLOAD: {type(e).__name__}: {e}")
+    logger.exception(f"❌ ERRO NO DOWNLOAD: {type(e).__name__}:")
     raise
 
 pdf_file = io.BytesIO(pdf_bytes)
