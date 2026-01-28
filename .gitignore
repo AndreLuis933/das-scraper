@@ -13,3 +13,4 @@ wheels/
 .env
 .aws-sam
 _____tmp.py
+.vscode

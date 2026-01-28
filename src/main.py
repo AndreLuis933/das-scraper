@@ -8,19 +8,27 @@ import re
 import sys
 import time
 from contextlib import suppress as contextlib_suppress
+from pathlib import Path
 
 import pandas as pd
 import requests
 from camoufox.utils import DefaultAddons
+from dateutil.relativedelta import relativedelta
 from pandascamoufox import CamoufoxDf
 from PyPDF2 import PdfReader
 
+if not (Path("/.dockerenv").exists() or Path("/run/.containerenv").exists()):
+    from dotenv import load_dotenv
+    from PrettyColorPrinter import add_printer
+
+    load_dotenv()
+    add_printer(True)
+
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", stream=sys.stdout, force=True
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", stream=sys.stdout, force=True,
 )
 logger = logging.getLogger(__name__)
 
-# Força flush imediato
 sys.stdout.reconfigure(line_buffering=True)
 sys.stderr.reconfigure(line_buffering=True)
 
@@ -35,7 +43,7 @@ if not cnpj or not api:
     logger.info("❌ CNPJ ou API do WHATSAPP não configurado, retornando")
     sys.exit(1)
 
-cfox = CamoufoxDf(humanize=False, headless=True, **{"exclude_addons": [DefaultAddons.UBO]})
+cfox = CamoufoxDf(humanize=False, headless=True, exclude_addons= [DefaultAddons.UBO])
 logger.info("✓ Camoufox inicializado")
 
 
@@ -47,9 +55,12 @@ def gf(selector="*"):
                 return df
 
 
-agora = datetime.datetime.now(tz=datetime.UTC)
-ano_str = agora.strftime("%Y")
-ano_mes = agora.strftime("%Y%m")
+agora = datetime.datetime.now(tz=datetime.UTC).astimezone()
+
+data_referencia = agora - relativedelta(months=1) if agora.day <= 20 else agora
+
+ano_str = data_referencia.strftime("%Y")
+ano_mes = data_referencia.strftime("%Y%m")
 
 cfox.page.goto("https://www8.receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/Identificacao")
 
@@ -66,8 +77,7 @@ tentativas = 0
 while df.empty:
     tentativas += 1
     with contextlib_suppress(Exception):
-        df = gf("a")
-        df = df.loc[df.aa_text.str.contains("Emitir Guia de Pagamento", na=False)]
+        df = gf('a[href="/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/emissao"]')
 logger.info(f"✓ Link de emissão encontrado após {tentativas} tentativas")
 
 time.sleep(tempo_aleatorio())
