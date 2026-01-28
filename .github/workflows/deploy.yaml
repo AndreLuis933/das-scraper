@@ -1,26 +1,13 @@
 name: Build Full Stack
 
-
 on:
   push:
-    branches: ['main']
+    branches: ['master']
     paths-ignore:
       - '**/*.md'
       - '.gitignore'
       - 'docs/**'
       - 'LICENSE'
-      - 'Justfile'
-
-# CONCURRENCY
-# Concorrêcia
-# Garante que o deploy aconteça em ordem.
-# 'cancel-in-progress: false' significa: Se eu enviar o commit A, depois o B,
-# espera o A terminar antes de iniciar o B.
-# Também previne race conditions.
-concurrency:
-  group: deploy-main
-  cancel-in-progress: false
-
 env:
   REGISTRY: ghcr.io
   REPO: ${{ github.repository }}
