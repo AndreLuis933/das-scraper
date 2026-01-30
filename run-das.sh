@@ -3,7 +3,7 @@ set -e
 
 IMAGE="ghcr.io/andreluis933/das-scraper:latest"
 CONTAINER_NAME="das-scraper"
-ENV_FILE="/das-scraper/.env"
+ENV_FILE="/projects/das-scraper/.env"
 
 echo "[$(date)] Atualizando imagem..."
 docker pull "$IMAGE"
