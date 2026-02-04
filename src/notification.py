@@ -1,13 +1,13 @@
 import datetime
 import os
 import traceback
-from pathlib import Path
 
 import requests
 
 RESEND_API_KEY = os.environ["RESEND_API_KEY"]
 DESTINATION_EMAIL = os.environ["DESTINATION_EMAIL"]
 SENDER_EMAIL = os.environ["SENDER_EMAIL"]
+GITHUB_TEMPLATE_URL = os.environ["GITHUB_TEMPLATE_URL"]
 
 def send_email(subject, html_content):
     response = requests.post(
@@ -19,14 +19,14 @@ def send_email(subject, html_content):
 
 
 def load_template(template_name):
-
-    template_path = os.path.join(Path(__file__).parent.parent, "template", template_name)
-    with open(template_path, encoding="utf-8") as f:
-        return f.read()
+    """Fetch email template from GitHub repository."""
+    template_url = f"{GITHUB_TEMPLATE_URL}/{template_name}"
+    response = requests.get(template_url)
+    response.raise_for_status()
+    return response.text
 
 
 def notify_error(job_name):
-
     template = load_template("email_error.html")
     timestamp = datetime.datetime.now(tz=datetime.UTC).astimezone().strftime("%d/%m/%Y às %H:%M:%S")
     error_msg = traceback.format_exc()
@@ -38,7 +38,6 @@ def notify_error(job_name):
     send_email(f"🚨 {job_name} - Falhou", html)
 
 def notify_success(job_name):
-
     template = load_template("email_success.html")
     timestamp = datetime.datetime.now(tz=datetime.UTC).astimezone().strftime("%d/%m/%Y às %H:%M:%S")
 
