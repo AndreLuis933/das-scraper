@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Completed</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: &quot;Segoe UI&quot;, Tahoma, Geneva, Verdana, sans-serif;
+    "
+  >
+    <table role="presentation" style="width: 100%; border-collapse: collapse">
+      <tr>
+        <td align="center" style="padding: 40px 20px">
+          <!-- Container Principal -->
+          <table
+            role="presentation"
+            style="
+              max-width: 600px;
+              width: 100%;
+              background: #1e1e2e;
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+                  padding: 40px 30px;
+                  text-align: center;
+                "
+              >
+                <div style="font-size: 48px; margin-bottom: 10px">✅</div>
+                <h1
+                  style="
+                    margin: 0;
+                    color: #ffffff;
+                    font-size: 28px;
+                    font-weight: 600;
+                    letter-spacing: -0.5px;
+                  "
+                >
+                  Job Completed
+                </h1>
+                <p
+                  style="
+                    margin: 10px 0 0 0;
+                    color: rgba(255, 255, 255, 0.9);
+                    font-size: 14px;
+                  "
+                >
+                  Executado com sucesso
+                </p>
+              </td>
+            </tr>
+
+            <!-- Content -->
+            <tr>
+              <td style="padding: 40px 30px">
+                <!-- Job Name -->
+                <div style="margin-bottom: 30px">
+                  <div
+                    style="
+                      color: #8b8b9a;
+                      font-size: 12px;
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    JOB
+                  </div>
+                  <div
+                    style="color: #e0e0e8; font-size: 20px; font-weight: 600"
+                  >
+                    {{JOB_NAME}}
+                  </div>
+                </div>
+
+                <!-- Timestamp -->
+                <div style="margin-bottom: 30px">
+                  <div
+                    style="
+                      color: #8b8b9a;
+                      font-size: 12px;
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    HORÁRIO
+                  </div>
+                  <div style="color: #e0e0e8; font-size: 16px">
+                    {{TIMESTAMP}}
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  background: #16161f;
+                  padding: 24px 30px;
+                  text-align: center;
+                  border-top: 1px solid #2a2a3e;
+                "
+              >
+                <p style="margin: 0; color: #6b6b7a; font-size: 13px">
+                  DevRium Cloud • Automated Job Monitoring
+                </p>
+                <p style="margin: 8px 0 0 0; color: #4b4b5a; font-size: 11px">
+                  devrium.cloud
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

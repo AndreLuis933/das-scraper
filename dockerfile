@@ -32,6 +32,7 @@ COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 
 COPY src /app/src
+COPY template /app/template
 
 RUN --mount=type=cache,target=/root/.cache/uv \
   uv sync --frozen
@@ -54,6 +55,7 @@ COPY --from=builder /python /python
 COPY --from=builder --chown=python:python /root/.cache/camoufox /home/python/.cache/camoufox
 COPY --from=builder --chown=python:python /app/.venv /app/.venv
 COPY --from=builder --chown=python:python /app/src /app/src
+COPY --from=builder --chown=python:python /app/template /app/template
 
 ENV PATH="/app/.venv/bin:${PATH}"
 
