@@ -5,6 +5,9 @@ IMAGE="ghcr.io/andreluis933/das-scraper:latest"
 CONTAINER_NAME="das-scraper"
 ENV_FILE="/projects/das-scraper/.env"
 
+echo "[$(date)] Atualizando Repositorio..."
+git fetch origin master && git reset --hard origin/master
+
 echo "[$(date)] Atualizando imagem..."
 docker pull "$IMAGE"
 
