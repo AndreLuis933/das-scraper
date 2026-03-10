@@ -141,7 +141,7 @@ def main():
 
         pdf_base64 = base64.b64encode(pdf_bytes).decode("utf-8")
         requests.post(
-            f"{api}/send",
+            f"{api}/das-notification",
             json={
                 "barcode": codigo_barras_formatado,
                 "pdfBase64": pdf_base64,
