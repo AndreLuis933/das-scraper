@@ -37,7 +37,7 @@ sys.stdout.reconfigure(line_buffering=True)
 sys.stderr.reconfigure(line_buffering=True)
 
 cfox = CamoufoxDf(humanize=False, headless=True, exclude_addons=[DefaultAddons.UBO])
-logger.info("✓ Camoufox inicializado")
+logger.info("Camoufox inicializado")
 api = os.getenv("WHATSAPP_API_URL", "")
 cnpj = os.getenv("CNPJ", "")
 if not cnpj or not api:
